@@ -5,7 +5,7 @@ const routes = Router();
 
 routes.get('/devs', DevControoller.index);
 routes.get('/search', SearchDevController.index);
-routes.post('/devs',() => DevControoller.gravar);
+routes.post('/devs', DevControoller.store);
 
 
 
