@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 function DevForm(props) {
     const { onSubmit } = props;
-
     const [github_username, setGithubUsername] = useState('');
     const [techs, setTechs] = useState('');
     const [latitude, setLatitude] = useState('');

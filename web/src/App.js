@@ -27,8 +27,6 @@ function App() {
 
   async function handleSubmit(data) {
     const response = await api.post('/devs',data)
-
-    
     setDevs([...devs, response.data]); //Como existe imutabilidade não existe push
     console.log(response.data);
   }
