@@ -5,13 +5,14 @@ import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import api from '../services/api'
+import { connect, disconnect, subscripeToNewDevs } from '../services/socket'
 
 // import { Container } from './styles';
 
 export default function Main({ navigation }) {
     const [devs, setDevs] = useState([]);
     const [currentRegion, setCurrentRegion] = useState(null);
-    const [text, setText] = useState('');
+    const [techs, setTechs] = useState('');
 
     useEffect(() => {
         async function loadInitialPosition() {
@@ -29,10 +30,23 @@ export default function Main({ navigation }) {
                     latitudeDelta: 0.04,
                     longitudeDelta: 0.04
                 })
+
             }
         }
         loadInitialPosition();
     }, []);
+
+    useEffect(()=> {
+        subscripeToNewDevs(dev => setDevs([...devs, dev]))
+    },[devs])
+
+    function setupSocket() {
+        disconnect();
+        const { latitude, longitude } = currentRegion;
+
+        connect(latitude, longitude, techs);
+
+    }
 
     async function loadDevs() {
         const { latitude, longitude } = currentRegion;
@@ -41,13 +55,14 @@ export default function Main({ navigation }) {
             params: {
                 latitude,
                 longitude,
-                techs: text
+                techs
             }
 
         })
-        console.log(response.data)
-        setDevs(response.data)
+        console.log(response.data);
+        setDevs(response.data);
 
+        setupSocket();
     }
 
 
@@ -90,9 +105,9 @@ export default function Main({ navigation }) {
                     placeholderTextColor="#999"
                     autoCapitalize="words"
                     autoCorrect={false}
-                    onChangeText={text => setText(text)}
+                    onChangeText={text => setTechs(text)}
                 />
-                <TouchableOpacity onPress={() => { loadDevs()}} style={styles.loadButton}>
+                <TouchableOpacity onPress={() => { loadDevs() }} style={styles.loadButton}>
                     <MaterialIcons name="my-location" size={20} color="#fff" />
                 </TouchableOpacity>
             </KeyboardAvoidingView>
